@@ -29,8 +29,12 @@ app.use(
 );
 
 const isLoggedIn = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.slice(7);
+  if (!token) return next();
   try {
-    req.user = await findUserWithToken(req.headers.authorization);
+    const user = await findUserWithToken(token);
+    req.user = user;
     next();
   } catch (ex) {
     next(ex);
